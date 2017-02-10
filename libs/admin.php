@@ -6,7 +6,7 @@
 <form class="wrap" method="POST">
   <div v-if="form.hooks.length">
     <div v-for="(hook, hookid) in form.hooks">
-      <h2>{{hook.name || "unnamed"}} <button type="button" name="button" class="button" v-on:click="deleteHook(hookid)">削除</button></h2>
+      <h2>{{hook.name || "unnamed"}} <button type="button" name="button" class="button" v-on:click="deleteHook(hookid)">&times;</button></h2>
       <table class="form-table">
         <tbody>
           <tr>
@@ -46,7 +46,7 @@
 
             <td>
               <label>
-                <input :name="'hooks['+hookid+'][type]'" type="checkbox" value="json" checked=""> FormDataではなくJSONをポストする
+                <input :name="'hooks['+hookid+'][type]'" type="checkbox" value="json" checked=""> Send JSON Data(instead of FormData).
               </label>
             </td>
           </tr>
@@ -87,8 +87,8 @@
 
   <p>
     <input type="hidden" name="apiadapter-editor-setting" value="1">
-    <button type="button" name="button" class="button" v-on:click="addHook">更にフック追加</button>
-    <input type="submit" name="submit" id="submit" value="変更を保存" class="button button-primary">
+    <button type="button" name="button" class="button" v-on:click="addHook">Add more hook</button>
+    <input type="submit" name="submit" id="submit" value="Save" class="button button-primary">
   </p>
 </form>
 </script>
