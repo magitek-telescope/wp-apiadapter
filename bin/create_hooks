@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+$template = file_get_contents(__DIR__ . "/../conf/hooks_base.php");
+$hooks = json_decode(file_get_contents(__DIR__ . "/../conf/hooks.json"));
+$output = $template;
+
+$functions = "";
+$adds      = "";
+
+foreach ($hooks as $key => $hook) {
+  $functions .= "
+  public function hooks_" . $hook . "(\$data){
+    \$this->execute_hook(\$data, \"" . $hook . "\");
+  }
+";
+  $adds .= "
+  add_action(\"" . $hook . "\", [\$this, \"hooks_" . $hook . "\"], 10, 1);";
+}
+$output = str_replace("{functions}", $functions, $output);
+$output = str_replace("{adds}", $adds, $output);
+echo $output;
