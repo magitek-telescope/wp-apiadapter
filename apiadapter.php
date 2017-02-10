@@ -18,9 +18,7 @@ add_action( "plugins_loaded", array( "APIAdapter", "get_instance" ) );
 class APIAdapter{
   private $hooksLib;
   private $basename;
-  private $hookNames = [
-    "publish_post"
-  ];
+  private $hookNames = [];
 
   private $hooks = [];
 
@@ -33,6 +31,18 @@ class APIAdapter{
   }
 
   private function __construct() {
+    $this->hooks = json_decode(get_option("apiadapter_hooks", []), true);
+    if($this->hooks){
+      foreach ($this->hooks as $key => $hook) {
+        if($this->hookName){
+          if(!in_array($hook["target"], $this->hookName)){
+            $this->hookNames[] = $hook["target"];
+          }
+        }else{
+          $this->hookNames[] = $hook["target"];
+        }
+      }
+    }
     $this->basename = plugin_basename( __FILE__ );
     $this->add_actions();
     $this->hooksLib = APIAdapter_Hooks::get_instance();
@@ -40,7 +50,13 @@ class APIAdapter{
   }
 
   private function add_actions() {
+    add_action("admin_init", [ $this, "save_settings"]);
     add_action("admin_menu", [ $this, "admin_init"]);
+  }
+
+  public function save_settings(){
+    if(!array_key_exists("apiadapter-editor-setting", $_POST)) return;
+    update_option("apiadapter_hooks", json_encode($_POST["hooks"]));
   }
 
   public function admin_init(){
@@ -61,15 +77,18 @@ class APIAdapter{
     if(!in_array($name, $this->hookNames)) return;
 
     foreach ($this->hooks as $key => $hook) {
-      if($name == $hook["name"]) $this->request($data, $hook);
+      if($name == $hook["target"]){
+        $result = $this->request($data, $hook);
+      }
     }
   }
 
   public function request($data, $hook){
     $body = [];
 
-    foreach ($hook["params"]["body"] as $key => $template) {
-      $output = $template;
+    foreach ($hook["bodies"] as $_ => $template) {
+      $key = $template["key"];
+      $output = $template["value"];
       while(true){
         if(preg_match('/(.*){{([a-zA-z-_]+)\.([a-zA-Z-_]+)}}(.*)/', $output, $matches) !== 0){
           $target = $matches[2];
@@ -77,7 +96,7 @@ class APIAdapter{
           $replateText = get_post($data)->{$name};
           $output = preg_replace(
             "/(.*){{" . $target . "\." . $name . "}}(.*)/",
-            "$1{$replateText}$4",
+            "$1{$replateText}$2",
             $output);
         }else{
           break;
