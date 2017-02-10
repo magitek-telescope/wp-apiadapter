@@ -11,7 +11,7 @@ Author: Potato4d
 Version: 0.1
 */
 
-require_once(__DIR__ . "/libs/hooks.php");
+require_once __DIR__ . "/libs/hooks.php";
 
 add_action( "plugins_loaded", array( "APIAdapter", "get_instance" ) );
 
@@ -22,25 +22,7 @@ class APIAdapter{
     "publish_post"
   ];
 
-  private $hooks = [
-    [
-      "name"    => "publish_post",
-      "url"     => "https://hooks.slack.com/services/",
-      "type"    => "json",
-      "params"  => [
-        "method"  => "POST",
-        "headers" => [
-          "Content-Type"  => "application/json"
-        ],
-        "body" => [
-          "channel" => "#dev",
-          "username" => "WordPress",
-          "icon_emoji" => ":pencil:",
-          "text" => "New WordPress Post\n Name:{{post.post_title}} \nContent:{{post.post_content}}"
-        ]
-      ]
-    ]
-  ];
+  private $hooks = [];
 
   public static function get_instance() {
     static $instance;
@@ -68,7 +50,7 @@ class APIAdapter{
       "administrator",
       "apiadapter",
       function(){
-        echo "<h1>API Adapter</h1>";
+        require_once __DIR__ . "/libs/admin.php";
       },
       NULL,
       79.124
@@ -79,12 +61,7 @@ class APIAdapter{
     if(!in_array($name, $this->hookNames)) return;
 
     foreach ($this->hooks as $key => $hook) {
-      if($name == $hook["name"]){
-        echo "<pre>";
-        var_dump($this->request($data, $hook));
-        echo "</pre>";
-        exit;
-      }
+      if($name == $hook["name"]) $this->request($data, $hook);
     }
   }
 
