@@ -20,6 +20,20 @@
 
           <tr>
             <th scope="row">
+              <label>Method</label>
+            </th>
+            <td>
+              <select v-model="hook.method" :name="'hooks['+hookid+'][method]'">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row">
               <label>Target</label>
             </th>
             <td>

@@ -12,7 +12,7 @@ class APIAdapter_Hooks {
   }
 
   private function __construct() {
-    
+
   add_action("_admin_menu", [$this, "hooks__admin_menu"], 10, 1);
   add_action("_network_admin_menu", [$this, "hooks__network_admin_menu"], 10, 1);
   add_action("_user_admin_menu", [$this, "hooks__user_admin_menu"], 10, 1);
@@ -223,7 +223,7 @@ class APIAdapter_Hooks {
     $this->adapter->execute_hook($data, $name);
   }
 
-  
+
   public function hooks__admin_menu($data){
     $this->execute_hook($data, "_admin_menu");
   }
