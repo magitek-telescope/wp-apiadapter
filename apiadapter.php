@@ -14,6 +14,7 @@ Version: 0.1
 require_once __DIR__ . "/libs/hooks.php";
 
 add_action( "plugins_loaded", array( "APIAdapter", "get_instance" ) );
+register_activation_hook( __FILE__, [ "APIAdapter", "active"]);
 
 class APIAdapter{
   private $hooksLib;
@@ -50,8 +51,13 @@ class APIAdapter{
   }
 
   private function add_actions() {
-    add_action("admin_init", [ $this, "save_settings"]);
-    add_action("admin_menu", [ $this, "admin_init"]);
+    add_action("admin_init"         , [ $this, "save_settings"]);
+    add_action("admin_menu"         , [ $this, "admin_init"]);
+  }
+
+  public static function activate(){
+    echo "test";
+    exit;
   }
 
   public function save_settings(){
