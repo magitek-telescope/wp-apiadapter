@@ -14,6 +14,7 @@ Version: 0.1
 require_once __DIR__ . "/libs/hooks.php";
 
 add_action( "plugins_loaded", array( "APIAdapter", "get_instance" ) );
+register_activation_hook( __FILE__, [ "APIAdapter", "activate"]);
 
 class APIAdapter{
   private $hooksLib;
@@ -50,8 +51,25 @@ class APIAdapter{
   }
 
   private function add_actions() {
-    add_action("admin_init", [ $this, "save_settings"]);
-    add_action("admin_menu", [ $this, "admin_init"]);
+    add_action("admin_init"         , [ $this, "save_settings"]);
+    add_action("admin_menu"         , [ $this, "admin_init"]);
+  }
+
+  public static function activate(){
+    global $wpdb;
+    $wpdb->query(
+      "CREATE TABLE `{$wpdb->prefix}_apiadapter_editor` (
+        `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+        `name` varchar(127) DEFAULT '',
+        `method` varchar(127) DEFAULT '',
+        `target` text,
+        `url` text,
+        `type` varchar(255) DEFAULT NULL,
+        `headers` text,
+        `bodies` text,
+        PRIMARY KEY (`id`)
+      )"
+    );
   }
 
   public function save_settings(){
