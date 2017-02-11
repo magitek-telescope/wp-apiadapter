@@ -57,6 +57,8 @@ class APIAdapter{
   public function save_settings(){
     if(!array_key_exists("apiadapter-editor-setting", $_POST)) return;
     update_option("apiadapter_hooks", json_encode($_POST["hooks"]));
+    header("Location: " . $_SERVER["REQUEST_URI"]);
+    exit;
   }
 
   public function admin_init(){
