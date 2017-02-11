@@ -114,7 +114,7 @@ class APIAdapter{
     return wp_remote_request(
       $hook["url"],
       [
-        "method" => $hook["params"]["method"],
+        "method" => $hook["method"],
         "headers" => $hook["params"]["headers"],
         "body" => $body
       ]
